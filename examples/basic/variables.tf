@@ -1,20 +1,24 @@
 # Input Variables
 
 ## Resource tags
-variable "stack_item_label" {
-  type = "string"
-}
-
 variable "stack_item_fullname" {
   type = "string"
 }
 
+variable "stack_item_label" {
+  type = "string"
+}
+
 ## VPC parameters
-variable "vpc_stack_name" {
+variable "lan_subnet_ids" {
   type = "string"
 }
 
 variable "region" {
+  type = "string"
+}
+
+variable "vpc_id" {
   type = "string"
 }
 
@@ -24,14 +28,6 @@ variable "ami" {
 }
 
 variable "instance_type" {
-  type = "string"
-}
-
-variable "instance_profile" {
-  type = "string"
-}
-
-variable "key_name" {
   type = "string"
 }
 

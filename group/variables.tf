@@ -64,7 +64,7 @@ For the best per-I/O latency experience, we recommend that you provision an IOPS
 variable "ebs_vol_iops" {
   type        = "string"
   description = "The amount of provisioned IOPS"
-  default     = "16000"
+  default     = "2000"
 }
 
 variable "ebs_vol_snapshot_id" {
@@ -121,7 +121,7 @@ For the best per-I/O latency experience, we recommend that you provision an IOPS
 variable "root_vol_iops" {
   type        = "string"
   description = "The amount of provisioned IOPS"
-  default     = "16000"
+  default     = "2000"
 }
 
 variable "root_vol_type" {
