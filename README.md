@@ -9,7 +9,7 @@ Module stack supporting multiple deployment scenarios of an Auto Scaling Group t
 
 ## Requirements
 
-* Terraform 0.6.16 or newer
+* Terraform 0.8.0 or newer
 * AWS provider
 
 ## Group Module
@@ -19,35 +19,37 @@ The group module will provision security group, launch configuration and auto sc
 ## Input Variables
 
 **Resource labels**
-* `stack_item_label` - Short form identifier for this stack. This value is used to create the **Name** resource tag for resources created by this stack item, and also serves as a unique key for re-use.
 * `stack_item_fullname` - Long form descriptive name for this stack item. This value is used to create the **application** resource tag for resources created by this stack item.
+* `stack_item_label` - Short form identifier for this stack. This value is used to create the **Name** resource tag for resources created by this stack item, and also serves as a unique key for re-use.
 
 **Virtual Private Cloud (VPC) parameters**
-* `vpc_id` - ID of the target VPC.
 * `region` - AWS region to be utilized.
 * `subnets` - List of VPC subnets to associate with the auto scaling group.
+* `vpc_id` - ID of the target VPC.
 
 **Launch configuration parameters**
 * `ami` - Amazon Machine Image (AMI) to associate with the launch configuration.
-* `instance_type` - EC2 instance type to associate with the launch configuration.
-* `instance_profile` - IAM instance profile to associate with the launch configuration.
-* `key_name` - SSH key pair to associate with the launch configuration.
 * `associate_public_ip_address` - (Default: **false**) Flag for associating public IP addresses with instances managed by the auto scaling group.
-* `user_data` - Instance initialization data to associate with the launch configuration.
-* `enable_monitoring` - (Default: **true**) Flag to enable detailed monitoring.
 * `ebs_optimized` - (Default: **false**) Flag to enable Elastic Block Storage (EBS) optimization.
+* `enable_monitoring` - (Default: **true**) Flag to enable detailed monitoring.
+* `instance_profile` - (Optional) IAM instance profile to associate with the launch configuration.
+* `instance_type` - EC2 instance type to associate with the launch configuration.
+* `key_name` - (Optional) SSH key pair to associate with the launch configuration.
 * `placement_tenancy` - (Default: **default**) The tenancy of the instance. Valid values are **default** or **dedicated**.
+* `user_data` - (Optional) Instance initialization data to associate with the launch configuration.
 
 **Block volume configuration**
 
 NOTES: Ephemeral block device support to be implemented in a future version. Currently only offer support for a single additional volume in addition to **root**. Currently only support association of EBS snapshots.
 
-* `root_vol_type` - (Default: **gp2**) The type of volume. Valid values are **standard** or **gp2**. (_While 'io1' is a valid type, this module does not currently expose the 'iops' parameter_).
+* `ebs_vol_del_on_term` - (Default: **true**) Whether the volume should be destroyed on instance termination. Only used when `ebs_vol_snapshot_id` has been specified.
+* `ebs_vol_device_name` - (Default: **/dev/xvda**) The name of the device to mount. Only used when `ebs_vol_snapshot_id` has been specified.
+* `ebs_vol_iops` - (Default: **2000**) The amount of provisioned IOPS. Only used with volumes of type `io1` and when `ebs_vol_snapshot_id` has been specified.
+* `ebs_vol_snapshot_id` - (Optional) The Snapshot ID to mount. (_This module currently only supports snapshot based EBS volumes_).
+* `ebs_vol_type` - (Default: **gp2**) The type of volume. Valid values are **standard** or **gp2**. Only used when `ebs_vol_snapshot_id` has been specified.
 * `root_vol_del_on_term` - (Default: **true**) Whether the volume should be destroyed on instance termination.
-* `ebs_snapshot_id` - (Optional) The Snapshot ID to mount. (_This module currently only support association of snapshots. The following parameters are optional if this one is left unset_).
- * `ebs_vol_type` - (Default: **gp2**) The type of volume. Valid values are **standard** or **gp2**. (_While 'io1' is a valid type, this module does not currently expose the 'iops' parameter_).
- * `ebs_device_name` - The name of the device to mount.
- * `ebs_vol_del_on_term` - (Default: **true**) Whether the volume should be destroyed on instance termination.
+* `root_vol_iops` - (Default: **2000**) The amount of provisioned IOPS. Only used with volumes of type `io1`
+* `root_vol_type` - (Default: **gp2**) The type of volume. Valid values are **standard**, **gp2** or **io1**.
 
 **Auto scaling group parameters**
 
@@ -70,12 +72,8 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "template_file" "user_data" {
+data "template_file" "user_data" {
   template = "${file("../templates/user_data.tpl")}"
-
-  lifecycle {
-    create_before_destroy = true
-  }
 }
 ```
 

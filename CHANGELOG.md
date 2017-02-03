@@ -7,6 +7,20 @@
 * Consider coding `ebs_optimized` against list of [ebs-optimized instances](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSOptimized.html).
 * Expose ephemeral block device support
 
+## 0.3.0
+
+#### BACKWARDS INCOMPATIBILITIES / NOTES:
+* The following parameters were renamed:
+ * `ebse_device_name` to `ebs_vol_device_name`
+ * `ebs_snapshot_id` to `ebs_vol_snapshot_id`
+
+#### IMPROVEMENTS:
+* Conditional support for the following parameters:
+ * `instance_profile`
+ * `key_name`
+ * `user_data`
+* Support for `io1` root & EBS volumes
+
 ## 0.2.0 (May 16, 2016)
 
 #### BACKWARDS INCOMPATIBILITIES / NOTES:
